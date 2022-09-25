@@ -1,0 +1,25 @@
+{
+    "name": "renereed1/user-service",
+    "type": "library",
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "mockery/mockery": "^1.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Renereed1\\UserService\\": "src/"
+        },
+        "autoload-dev": {
+            "psr-4": {
+                "Renereed1\\UserServiceTest\\": "tests/"
+            }
+        }
+    },
+    "authors": [
+        {
+            "name": "Ricky Reed",
+            "email": "renereed1@gmail.com"
+        }
+    ]
+}
