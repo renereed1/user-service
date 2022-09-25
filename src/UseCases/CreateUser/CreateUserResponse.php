@@ -6,9 +6,11 @@ class CreateUserResponse
 {
 
     public readonly string $userId;
+    public readonly string $createdAt;
 
-    public function __construct(string $userId)
+    public function __construct(string $userId, string $createdAt)
     {
         $this->userId = $userId;
+        $this->createdAt = $createdAt;
     }
 }
