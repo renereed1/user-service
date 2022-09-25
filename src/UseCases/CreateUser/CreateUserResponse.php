@@ -6,6 +6,5 @@ class CreateUserResponse
 {
 
     public function __construct()
-    {
-    }
+    { }
 }

@@ -2,15 +2,25 @@
 
 namespace Renereed1\UserService\UseCases\CreateUser;
 
+use Renereed1\UserService\Domain\User\UserExists;
+use Renereed1\UserService\Domain\User\UserRepository;
+
 class CreateUser
 {
+    const USER_EXISTS_EXCEPTION_MESSAGE = 'User exists';
 
-    public function __construct()
+    private UserRepository $userRepository;
+
+    public function __construct(UserRepository $userRepository)
     {
+        $this->userRepository = $userRepository;
     }
 
     public function execute(CreateUserRequest $request): CreateUserResponse
     {
+        if ($this->userRepository->userExistsWithEmail($request->email))
+            throw new UserExists(self::USER_EXISTS_EXCEPTION_MESSAGE);
+
         return new CreateUserResponse();
     }
 }
