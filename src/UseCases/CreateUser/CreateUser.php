@@ -21,6 +21,8 @@ class CreateUser
         if ($this->userRepository->userExistsWithEmail($request->email))
             throw new UserExists(self::USER_EXISTS_EXCEPTION_MESSAGE);
 
-        return new CreateUserResponse();
+        $userId = $this->userRepository->nextIdentity();
+
+        return new CreateUserResponse($userId->userId);
     }
 }
