@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Mockery as m;
 
 use Renereed1\UserService\Domain\User\Clock;
+use Renereed1\UserService\Domain\User\User;
 use Renereed1\UserService\Domain\User\UserExists;
 use Renereed1\UserService\Domain\User\UserId;
 use Renereed1\UserService\Domain\User\UserRepository;
@@ -25,6 +26,7 @@ class CreateUserTest extends TestCase
     const FUNCTION_USER_EXISTS_WITH_EMAIL = 'userExistsWithEmail';
     const FUNCTION_NEXT_IDENTITY = 'nextIdentity';
     const FUNCTION_NOW = 'now';
+    const FUNCTION_ADD = 'add';
 
     private UserRepository $mockUserRepository;
     private Clock $mockClock;
@@ -64,6 +66,9 @@ class CreateUserTest extends TestCase
         $this->mockUserRepository->shouldReceive(self::FUNCTION_NEXT_IDENTITY)
             ->once()
             ->andReturn($userId);
+
+        $this->mockUserRepository->shouldReceive(self::FUNCTION_ADD)
+            ->once();
 
         $this->mockClock->shouldReceive(self::FUNCTION_NOW)
             ->once()
@@ -113,6 +118,9 @@ class CreateUserTest extends TestCase
             ->once()
             ->andReturn($userId);
 
+        $this->mockUserRepository->shouldReceive(self::FUNCTION_ADD)
+            ->once();
+
         $this->mockClock->shouldReceive(self::FUNCTION_NOW)
             ->once()
             ->andReturn(DateTime::createFromFormat(DateTimeInterface::ATOM, self::NEW_USER_1_CREATED_AT));
@@ -141,6 +149,9 @@ class CreateUserTest extends TestCase
             ->once()
             ->andReturn($userId);
 
+        $this->mockUserRepository->shouldReceive(self::FUNCTION_ADD)
+            ->once();
+
         $this->mockClock->shouldReceive(self::FUNCTION_NOW)
             ->once()
             ->andReturn(DateTime::createFromFormat(DateTimeInterface::ATOM, self::NEW_USER_1_CREATED_AT));
@@ -150,5 +161,48 @@ class CreateUserTest extends TestCase
         $response = $this->useCase->execute($request);
 
         $this->assertEquals(self::NEW_USER_1_CREATED_AT, $response->createdAt);
+    }
+
+    /**
+     * @covers Renereed1\UserService\UseCases\CreateUser\CreateUser
+     *
+     * @return void
+     */
+    public function testCreateUserAddsUserToRepository(): void
+    {
+        $this->mockUserRepository->shouldReceive(self::FUNCTION_USER_EXISTS_WITH_EMAIL)
+            ->with(self::NEW_USER_1_EMAIL)
+            ->once()
+            ->andReturn(false);
+
+        $userId = new UserId(self::NEW_USER_1_ID);
+        $this->mockUserRepository->shouldReceive(self::FUNCTION_NEXT_IDENTITY)
+            ->once()
+            ->andReturn($userId);
+
+        $user = $this->makeUser();
+        $this->mockUserRepository->shouldReceive(self::FUNCTION_ADD)
+            ->andReturnUsing(function($arg) use ($user) {
+                $this->assertEquals($user, $arg);
+            })
+            ->once();
+
+        $this->mockClock->shouldReceive(self::FUNCTION_NOW)
+            ->once()
+            ->andReturn(DateTime::createFromFormat(DateTimeInterface::ATOM, self::NEW_USER_1_CREATED_AT));
+
+        $request = new CreateUserRequest(self::NEW_USER_1_EMAIL);
+
+        $response = $this->useCase->execute($request);
+
+        $this->assertEquals(self::NEW_USER_1_CREATED_AT, $response->createdAt);
+    }
+
+    private function makeUser(): User
+    {
+        $userId = new UserId(self::NEW_USER_1_ID);
+        $createdAt = DateTime::createFromFormat(DateTimeInterface::ATOM, self::NEW_USER_1_CREATED_AT);
+
+        return new User($userId, $createdAt, self::NEW_USER_1_EMAIL);
     }
 }

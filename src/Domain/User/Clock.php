@@ -2,9 +2,9 @@
 
 namespace Renereed1\UserService\Domain\User;
 
-use DateTimeInterface;
+use DateTime;
 
 interface Clock
 {
-    public function now(): DateTimeInterface;
+    public function now(): DateTime;
 }

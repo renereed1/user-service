@@ -6,5 +6,7 @@ interface UserRepository
 {
     public function userExistsWithEmail(string $email): bool;
 
+    public function add(User $user): void;
+
     public function nextIdentity(): UserId;
 }
