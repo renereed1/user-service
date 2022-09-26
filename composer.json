@@ -9,11 +9,11 @@
     "autoload": {
         "psr-4": {
             "Renereed1\\UserService\\": "src/"
-        },
-        "autoload-dev": {
-            "psr-4": {
-                "Renereed1\\UserServiceTest\\": "tests/"
-            }
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Renereed1\\UserServiceTest\\": "tests/"
         }
     },
     "authors": [
